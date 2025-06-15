@@ -1,9 +1,9 @@
-
 import React, { useState } from "react";
 import { useUser } from "@/contexts/UserContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
+import { SeoHead } from "@/components/SeoHead";
 
 export default function Profile() {
   const { user, profile, updateProfile, loading } = useUser();
@@ -29,41 +29,48 @@ export default function Profile() {
   };
 
   return (
-    <div className="flex flex-col items-center mt-6">
-      <form onSubmit={handleUpdate} className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-md border w-full max-w-sm space-y-4">
-        <h2 className="text-2xl font-bold mb-3 text-center">Your Profile</h2>
-        <div>
-          <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300" htmlFor="email-profile">
-            Email
-          </label>
-          <Input id="email-profile" value={profile?.email || ""} disabled />
-        </div>
-        <div>
-          <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300" htmlFor="first-name-profile">
-            First Name
-          </label>
-          <Input
-            id="first-name-profile"
-            value={firstName}
-            placeholder="First Name"
-            onChange={e => setFirstName(e.target.value)}
-          />
-        </div>
-        <div>
-          <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300" htmlFor="last-name-profile">
-            Last Name
-          </label>
-          <Input
-            id="last-name-profile"
-            value={lastName}
-            placeholder="Last Name"
-            onChange={e => setLastName(e.target.value)}
-          />
-        </div>
-        <Button className="w-full" type="submit" disabled={saving}>
-          {saving ? "Saving..." : "Save"}
-        </Button>
-      </form>
-    </div>
+    <>
+      <SeoHead
+        title="Profile – EskomCalc Pro"
+        description="View and manage your EskomCalc Pro profile and electricity calculation settings."
+        canonicalUrl="https://preview--eskom-unit-oracle.lovable.app/profile"
+      />
+      <div className="flex flex-col items-center mt-6">
+        <form onSubmit={handleUpdate} className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-md border w-full max-w-sm space-y-4">
+          <h2 className="text-2xl font-bold mb-3 text-center">Your Profile</h2>
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300" htmlFor="email-profile">
+              Email
+            </label>
+            <Input id="email-profile" value={profile?.email || ""} disabled />
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300" htmlFor="first-name-profile">
+              First Name
+            </label>
+            <Input
+              id="first-name-profile"
+              value={firstName}
+              placeholder="First Name"
+              onChange={e => setFirstName(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300" htmlFor="last-name-profile">
+              Last Name
+            </label>
+            <Input
+              id="last-name-profile"
+              value={lastName}
+              placeholder="Last Name"
+              onChange={e => setLastName(e.target.value)}
+            />
+          </div>
+          <Button className="w-full" type="submit" disabled={saving}>
+            {saving ? "Saving..." : "Save"}
+          </Button>
+        </form>
+      </div>
+    </>
   );
 }
