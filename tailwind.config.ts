@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,6 +19,9 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				playfair: ['Playfair Display', 'serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -84,13 +88,23 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+				"flash-result": {
+					"0%": { backgroundColor: "#c7f9cc" },
+					"100%": { backgroundColor: "transparent" },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				"flash-result": "flash-result 1s ease",
 			}
+		},
+		fontFamily: {
+			sans: ['Inter', 'sans-serif'],
+			playfair: ['Playfair Display', 'serif'],
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
 } satisfies Config;
+
