@@ -24,6 +24,7 @@ export function EskomCalculator() {
     season,
     setSeason,
     touPercentages,
+    setTouPercentages, // <-- Add this line!
     handleTouSliderChange,
     result,
     error,
