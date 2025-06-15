@@ -11,6 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Slider } from "@/components/ui/slider";
 import { Calculator, Info, Zap } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TOUTariff } from '@/data/tariffs';
 
 export function EskomCalculator() {
   const [province, setProvince] = useState<string>(Object.keys(provinceTariffs)[0]);
@@ -84,8 +85,22 @@ export function EskomCalculator() {
     setTouPercentages(newPercentages);
   }
 
-  const showNmdInput = selectedTariff && (selectedTariff.tariff_type.includes('Unbundled') || selectedTariff.tariff_type.includes('Time-of-Use'));
-  const showTouControls = selectedTariff && selectedTariff.tariff_type === 'Time-of-Use';
+  const showNmdInput = selectedTariff && ('network_capacity_charge_R_per_kVA' in selectedTariff);
+  const showTouControls = selectedTariff && selectedTariff.tariff_type === 'Time of Use (TOU)';
+
+  const touTooltips = useMemo(() => {
+    if (!showTouControls || !selectedTariff || typeof (selectedTariff as TOUTariff).periods !== 'object') {
+      return { peak: '', standard: '', offPeak: '' };
+    }
+    const periods = (selectedTariff as TOUTariff).periods as any;
+    const seasonKeyPart = season === 'high_demand_season' ? 'high_season' : 'low_season';
+    
+    return {
+      peak: periods[`${seasonKeyPart}_peak`]?.hours ? `Hours: ${periods[`${seasonKeyPart}_peak`]?.hours}` : 'Peak usage hours',
+      standard: 'Standard usage hours',
+      offPeak: 'Off-peak usage hours (usually nighttime)',
+    }
+  }, [selectedTariff, showTouControls, season]);
 
   return (
     <Card className="w-full max-w-2xl mx-auto shadow-2xl">
@@ -178,7 +193,7 @@ export function EskomCalculator() {
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild><Info size={16} className="cursor-pointer text-muted-foreground" /></TooltipTrigger>
-                            <TooltipContent><p>{selectedTariff.time_of_use_periods?.peak_hours_low_season}</p></TooltipContent>
+                            <TooltipContent><p>{touTooltips.peak}</p></TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
                 </div>
@@ -191,7 +206,7 @@ export function EskomCalculator() {
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild><Info size={16} className="cursor-pointer text-muted-foreground" /></TooltipTrigger>
-                            <TooltipContent><p>{selectedTariff.time_of_use_periods?.standard_hours}</p></TooltipContent>
+                            <TooltipContent><p>{touTooltips.standard}</p></TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
                 </div>
@@ -204,7 +219,7 @@ export function EskomCalculator() {
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild><Info size={16} className="cursor-pointer text-muted-foreground" /></TooltipTrigger>
-                            <TooltipContent><p>{selectedTariff.time_of_use_periods?.off_peak_hours}</p></TooltipContent>
+                            <TooltipContent><p>{touTooltips.offPeak}</p></TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
                 </div>

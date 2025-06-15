@@ -14,8 +14,10 @@ export type ProvinceData = Record<string, ProvinceTariffInfo[]>;
 const nameToKeyMap: Record<string, keyof typeof tariffs> = {
   "Homelight 20A": "Homelight_20A",
   "Homelight 60A": "Homelight_60A",
-  "Homepower 1": "Homepower_Standard",
   "Homepower 2": "Homeflex",
+  "Megaflex": "Megaflex",
+  "Ruraflex": "Ruraflex",
+  "Affordability Tariff": "Affordability_Tariff",
 };
 
 const rawProvinceData: Record<string, Omit<ProvinceTariffInfo, 'tariffKey'>[]> = {

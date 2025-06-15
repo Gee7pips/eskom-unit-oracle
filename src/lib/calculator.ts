@@ -1,4 +1,3 @@
-
 import { Tariff } from "@/data/tariffs";
 
 const AVG_DAYS_IN_MONTH = 30.4375;
@@ -23,26 +22,15 @@ export interface CalculationResult {
 }
 
 function calculateFixedCharges(tariff: Tariff, notifiedDemand: number = 0): { totalFixedCharge: number, breakdown: any[] } {
-  let totalFixedCharge = 0;
+  let totalFixedCharge = tariff.fixed_monthly_charge_R || 0;
   const breakdown = [];
 
-  const serviceCharge = (tariff.service_charge_R_per_POD_per_day_vat_incl || 0) * AVG_DAYS_IN_MONTH;
-  if (serviceCharge > 0) {
-    totalFixedCharge += serviceCharge;
-    breakdown.push({ label: "Monthly Service Charge", value: `R ${serviceCharge.toFixed(2)}` });
-  }
-  
-  const adminCharge = (tariff.administration_charge_R_per_POD_per_day_vat_incl || 0) * AVG_DAYS_IN_MONTH;
-  if (adminCharge > 0) {
-    totalFixedCharge += adminCharge;
-    breakdown.push({ label: "Monthly Admin Charge", value: `R ${adminCharge.toFixed(2)}` });
+  if (totalFixedCharge > 0) {
+    breakdown.push({ label: "Monthly Fixed Charge", value: `R ${totalFixedCharge.toFixed(2)}` });
   }
 
-  const capacityCharge = (tariff.network_capacity_charge_R_per_kVA_per_month_vat_incl || 0) * notifiedDemand;
-  if (capacityCharge > 0) {
-    totalFixedCharge += capacityCharge;
-    breakdown.push({ label: "Network Capacity Charge", value: `R ${capacityCharge.toFixed(2)}` });
-  }
+  // Note: Ruraflex and Megaflex have other charges that are placeholders.
+  // A full implementation would require inputs for these.
 
   return { totalFixedCharge, breakdown };
 }
@@ -63,40 +51,64 @@ export function calculateUnits({ amount, tariff, options }: CalculationInput): C
   let breakdown = [...fixedChargeBreakdown];
 
   switch (tariff.tariff_type) {
-    case 'Flat Rate': {
-      const rateZAR = (tariff.energy_charge_c_per_kWh_vat_incl || 0) / 100;
+    case 'Inclining Block': {
+      const rateBlocks = [...tariff.blocks].sort((a, b) => a.from_kWh - b.from_kWh);
+      let remainingAmount = amountForEnergy;
+      let totalUnits = 0;
+      let lastBlockToKwh = 0;
+
+      for (const block of rateBlocks) {
+          if (remainingAmount <= 0) break;
+
+          const rateZAR = block.rate_c_per_kWh / 100;
+          
+          if (rateZAR > 0) {
+              const blockStartKwh = lastBlockToKwh;
+              const blockEndKwh = block.to_kWh === null ? Infinity : block.to_kWh;
+              const blockkWh = blockEndKwh - blockStartKwh;
+              const blockCost = blockkWh * rateZAR;
+
+              if (remainingAmount >= blockCost) {
+                  totalUnits += blockkWh;
+                  remainingAmount -= blockCost;
+              } else {
+                  totalUnits += remainingAmount / rateZAR;
+                  remainingAmount = 0;
+              }
+          }
+          lastBlockToKwh = block.to_kWh || lastBlockToKwh;
+      }
+      units = totalUnits;
+      breakdown.push({ label: "Energy Cost", value: `R ${amountForEnergy.toFixed(2)}` });
+      break;
+    }
+
+    case 'Subsidized Flat Rate': {
+      const rateZAR = tariff.energy_rate_c_per_kWh / 100;
       if (rateZAR <= 0) return { error: "Invalid rate for this tariff." };
       units = amountForEnergy / rateZAR;
       breakdown.push({ label: "Energy Cost", value: `R ${amountForEnergy.toFixed(2)}` });
       breakdown.push({ label: "Rate", value: `R ${rateZAR.toFixed(4)} / kWh` });
       break;
     }
-    
-    case 'Unbundled Flat Rate': {
-      const totalCentsPerKwh = [
-        'energy_charge_c_per_kWh_vat_incl', 'legacy_charge_c_per_kWh_vat_incl', 
-        'network_demand_charge_c_per_kWh_vat_incl', 'ancillary_service_charge_c_per_kWh_vat_incl',
-        'electrification_rural_subsidy_c_per_kWh_vat_incl', 'affordability_subsidy_c_per_kWh_vat_incl'
-      ].reduce((sum, key) => sum + (tariff[key] || 0), 0);
-      
-      const rateZAR = totalCentsPerKwh / 100;
-      if (rateZAR <= 0) return { error: "Invalid rate for this tariff." };
-      units = amountForEnergy / rateZAR;
-      breakdown.push({ label: "Energy Cost", value: `R ${amountForEnergy.toFixed(2)}` });
-      breakdown.push({ label: "Combined Rate", value: `R ${rateZAR.toFixed(4)} / kWh` });
-      break;
-    }
 
-    case 'Time-of-Use': {
+    case 'Time of Use (TOU)': {
+        if (typeof tariff.periods === 'string') {
+          return { error: `Calculation for this TOU tariff is not yet supported due to missing rate data.` };
+        }
+      
         const season = options.season || 'low_demand_season';
         const percentages = options.touPercentages || { peak: 33.3, standard: 33.3, offPeak: 33.4 };
         
-        const rates = tariff.energy_charges?.[season];
-        if (!rates) return { error: "Invalid season or rates for this tariff." };
+        const seasonKeyPart = season === 'high_demand_season' ? 'high_season' : 'low_season';
+        
+        const peakRate = (tariff.periods as any)[`${seasonKeyPart}_peak`]?.rate_c_per_kWh / 100;
+        const stdRate = (tariff.periods as any)[`${seasonKeyPart}_standard`]?.rate_c_per_kWh / 100;
+        const offPeakRate = (tariff.periods as any)[`${seasonKeyPart}_off_peak`]?.rate_c_per_kWh / 100;
 
-        const peakRate = rates.peak_c_per_kWh_vat_incl / 100;
-        const stdRate = rates.standard_c_per_kWh_vat_incl / 100;
-        const offPeakRate = rates.off_peak_c_per_kWh_vat_incl / 100;
+        if (!peakRate || !stdRate || !offPeakRate) {
+            return { error: "Invalid rates for the selected season." };
+        }
 
         const weightedAvgCost = 
             (peakRate * (percentages.peak / 100)) +
@@ -113,7 +125,7 @@ export function calculateUnits({ amount, tariff, options }: CalculationInput): C
     }
 
     default:
-      return { error: `Calculation for tariff type "${tariff.tariff_type}" is not yet implemented.` };
+      return { error: `Calculation for tariff type "${(tariff as any).tariff_type}" is not yet implemented.` };
   }
 
   return { units, breakdown };
