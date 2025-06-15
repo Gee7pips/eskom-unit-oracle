@@ -22,11 +22,15 @@ export interface CalculationResult {
 }
 
 function calculateFixedCharges(tariff: Tariff, notifiedDemand: number = 0): { totalFixedCharge: number, breakdown: any[] } {
-  let totalFixedCharge = tariff.fixed_monthly_charge_R || 0;
+  let totalFixedCharge = 0;
   const breakdown = [];
 
-  if (totalFixedCharge > 0) {
-    breakdown.push({ label: "Monthly Fixed Charge", value: `R ${totalFixedCharge.toFixed(2)}` });
+  // Only use fixed_monthly_charge_R if it exists (present on IncliningBlockTariff, TOUTariff, SubsidizedFlatRateTariff)
+  if ('fixed_monthly_charge_R' in tariff && typeof tariff.fixed_monthly_charge_R === 'number') {
+    totalFixedCharge = tariff.fixed_monthly_charge_R;
+    if (totalFixedCharge > 0) {
+      breakdown.push({ label: "Monthly Fixed Charge", value: `R ${totalFixedCharge.toFixed(2)}` });
+    }
   }
 
   // Note: Ruraflex and Megaflex have other charges that are placeholders.
@@ -179,7 +183,8 @@ export function calculateUnits({ amount, tariff, options }: CalculationInput): C
     }
 
     case 'Time of Use (TOU)': {
-        if (typeof tariff.periods === 'string') {
+        // Only check periods if tariff has periods (not Megaflex, Ruraflex)
+        if (!('periods' in tariff) || typeof tariff.periods === 'string') {
           return { error: `Calculation for this TOU tariff is not yet supported due to missing rate data.` };
         }
       

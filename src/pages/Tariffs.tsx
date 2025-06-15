@@ -78,9 +78,9 @@ function TariffDetailCard({ tariff }: { tariff: Tariff }) {
             <span className="font-bold">Flat rate:</span> R{((tariff as any).energy_rate_c_per_kWh / 100).toFixed(2)} / kWh
           </div>
         )}
-        {tariff.fixed_monthly_charge_R ? (
+        {"fixed_monthly_charge_R" in tariff && typeof (tariff as any).fixed_monthly_charge_R === "number" ? (
           <div>
-            <span className="font-bold">Fixed monthly charge:</span> R{tariff.fixed_monthly_charge_R.toFixed(2)}
+            <span className="font-bold">Fixed monthly charge:</span> R{(tariff as any).fixed_monthly_charge_R.toFixed(2)}
           </div>
         ) : (
           <div>
