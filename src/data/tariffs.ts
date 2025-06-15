@@ -14,6 +14,10 @@ export interface Tariff {
   time_of_use_periods?: {
     high_demand_season: string;
     low_demand_season: string;
+    peak_hours_high_season?: string;
+    peak_hours_low_season?: string;
+    standard_hours?: string;
+    off_peak_hours?: string;
   };
   energy_charges?: {
     high_demand_season: {
