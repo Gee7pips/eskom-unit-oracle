@@ -1,4 +1,3 @@
-
 import { useEskomCalculator } from '@/hooks/useEskomCalculator';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -80,7 +79,8 @@ export function EskomCalculator() {
               EskomCalc Pro
               <span className="ml-2 text-base text-cyan-400 font-extrabold tracking-wide">2025/26</span>
             </CardTitle>
-            <CardDescription className="mt-1 text-sm text-slate-300 font-normal">
+            <CardDescription className="mt-1 text-sm text-slate-100 font-normal">
+              {/* Updated text color for better contrast */}
               Calculate prepaid units. Simple. Up-to-date.
             </CardDescription>
           </div>
@@ -91,7 +91,7 @@ export function EskomCalculator() {
           {/* Info Bar */}
           <div className="mb-2 px-4 py-2 rounded-lg border border-slate-700 bg-slate-900/70 flex items-center gap-3">
             <Info className="text-cyan-400 shrink-0" size={18} />
-            <div className="text-[15px] text-slate-200 font-medium">
+            <div className="text-[15px] text-slate-50 font-medium">
               Select your <span className="font-bold text-cyan-200">province</span> and <span className="font-bold text-cyan-200">tariff</span>.
               <span className="text-cyan-100/60 ml-2">TOU = Time of Use.</span>
             </div>
