@@ -24,7 +24,7 @@ export function EskomCalculator() {
     season,
     setSeason,
     touPercentages,
-    setTouPercentages, // <-- Add this line!
+    setTouPercentages,
     handleTouSliderChange,
     result,
     error,
@@ -52,20 +52,31 @@ export function EskomCalculator() {
   }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto shadow-2xl transition-shadow duration-500 hover:shadow-[0_10px_36px_rgba(16,83,194,0.1)] bg-card/90 backdrop-blur">
-      <CardHeader>
-        <div className="flex items-center gap-4">
-          <div className="bg-gradient-to-tr from-green-300 via-blue-200 to-primary p-3 rounded-lg shadow ring-2 ring-primary/25">
-            <Zap size={28} className="text-primary" />
+    <Card
+      className="w-full max-w-2xl mx-auto shadow-2xl border-0 bg-gradient-to-br from-[#f7fafc] via-white to-[#e4eafe] dark:from-[#16192a] dark:via-[#23263a] dark:to-[#22253b] 
+        backdrop-blur-[2px] rounded-2xl px-1 py-1 ring-1 ring-primary/10"
+      style={{
+        // Soft glass effect in light, deep gradient in dark
+        boxShadow: "0 4px 28px 0 rgba(0,30,150,0.08),0 1.5px 6px 0 rgba(90,140,255,0.04)",
+      }}
+    >
+      <CardHeader className="!pb-4">
+        <div className="flex items-center gap-5">
+          <div className="bg-gradient-to-tr from-green-300 via-blue-200 to-indigo-300 p-3 rounded-xl shadow-inner ring-2 ring-primary/20">
+            <Zap size={30} className="text-primary drop-shadow" />
           </div>
           <div>
-            <CardTitle className="text-3xl font-playfair font-bold tracking-tight text-primary animate-fade-in duration-700">Eskom Unit Calculator</CardTitle>
-            <CardDescription className="text-md text-muted-foreground">Calculate your electricity units for 2025/26 tariffs.</CardDescription>
+            <CardTitle className="text-3xl font-playfair font-extrabold tracking-tight text-primary animate-fade-in duration-700 leading-tight drop-shadow-sm">
+              Eskom Unit Calculator
+            </CardTitle>
+            <CardDescription className="text-md text-muted-foreground font-medium mt-1">
+              Calculate your electricity units for 2025/26 tariffs.
+            </CardDescription>
           </div>
         </div>
       </CardHeader>
       <form onSubmit={handleFormSubmit} className="space-y-1">
-        <CardContent className="space-y-8 pt-2">
+        <CardContent className="space-y-9 pt-2">
           <TariffSelection
             province={province}
             onProvinceChange={setProvince}
@@ -89,12 +100,24 @@ export function EskomCalculator() {
             />
           )}
         </CardContent>
-        <CardFooter className="flex flex-col gap-3">
-          <div className="flex flex-row gap-2 w-full">
-            <Button type="submit" className="w-full text-lg shadow transition-transform duration-100 hover:scale-105" size="lg" disabled={!selectedTariff}>
+        <CardFooter className="flex flex-col gap-5 bg-gradient-to-r from-primary/5 via-transparent to-indigo-200/25 dark:from-primary/10 dark:via-transparent dark:to-indigo-900/10 !-mx-6 rounded-b-2xl px-6 py-4 mt-3">
+          <div className="flex flex-row gap-3 w-full">
+            <Button
+              type="submit"
+              className="w-full text-lg font-bold shadow-lg shadow-primary/10 transition-transform duration-100 hover:scale-105 hover:shadow-xl active:scale-[0.98] focus:ring-2 focus:ring-primary/70"
+              size="lg"
+              disabled={!selectedTariff}
+            >
               <Calculator className="mr-2 h-5 w-5" /> Calculate Units
             </Button>
-            <Button type="button" variant="secondary" className="px-4" onClick={handleReset} title="Reset">
+            <Button
+              type="button"
+              variant="secondary"
+              className="px-4 ring-1 ring-secondary/30 bg-gradient-to-tr from-muted via-white to-muted/80 dark:from-muted/30 dark:to-muted/60"
+              onClick={handleReset}
+              title="Reset"
+              aria-label="Reset form"
+            >
               <RefreshCw size={18} />
             </Button>
           </div>
@@ -109,3 +132,4 @@ export function EskomCalculator() {
     </Card>
   );
 }
+
