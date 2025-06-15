@@ -1,6 +1,6 @@
-
 import { tariffs, Tariff } from "@/data/tariffs";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import ProvinceTariffsCarousel from "@/components/ProvinceTariffsCarousel";
 
 const headings = {
   "Inclining Block": { color: "from-green-400 via-blue-300 to-yellow-100", icon: "🔼" },
@@ -102,8 +102,34 @@ export default function TariffsPage() {
         <h1 className="text-4xl font-playfair font-extrabold mb-8 text-center tracking-tight text-primary animate-fade-in">
           South Africa Electricity Tariffs Explained (2025/26)
         </h1>
+        <div className="mb-8 text-lg text-muted-foreground text-center max-w-3xl mx-auto">
+          <span className="font-bold text-primary">What are electricity tariffs?</span><br />
+          Electricity tariffs are the price structures Eskom and municipalities use to charge households, businesses, and farms for using the grid. There are several types:
+          <ul className="list-disc text-left text-base font-normal mx-auto mt-3 mb-4 pl-7">
+            <li>
+              <span className="font-bold">Inclining Block Tariffs:</span> The more you use in a month, the higher your rate per unit becomes – a system designed to reward energy saving.
+            </li>
+            <li>
+              <span className="font-bold">Time of Use (TOU) Tariffs:</span> The price changes depending on the time of day (peak, standard, off-peak) and season (high, low), signaling when the grid is most/least stressed.
+            </li>
+            <li>
+              <span className="font-bold">Flat & Subsidized Rates:</span> Fixed rates for vulnerable or low-income customers, regardless of how much is used.
+            </li>
+          </ul>
+          <span className="font-semibold">
+            <span className="inline-block text-green-700 dark:text-green-300">Modern prepaid meters</span> let you see your usage and which tariff block or time band you're on, making it easier to plan and save.
+          </span>
+        </div>
+
+        <div className="mb-14 md:mb-16">
+          <ProvinceTariffsCarousel />
+        </div>
+        
+        <div className="mb-4 text-2xl font-bold text-primary/80 font-playfair text-center">
+          All National & City Tariffs in Detail
+        </div>
         <div className="mb-8 text-lg text-muted-foreground text-center max-w-2xl mx-auto">
-          All current Eskom and city tariffs, blocks and rules in plain language. Use the table and explanations below to learn how units and payments are calculated for each tariff.
+          Below you'll find expanded details of tariffs, blocks, TOU bands, and region-specific rates, for deep-dive comparison.
         </div>
         <div>
           {Object.values(tariffs).map((tariff: Tariff) => (
