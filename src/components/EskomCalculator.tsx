@@ -29,15 +29,15 @@ export function EskomCalculator() {
 
   useEffect(() => {
     if (availableTariffs.length > 0) {
-      if (!availableTariffs.find(t => t.tariffKey === tariffKey)) {
-        setTariffKey(availableTariffs[0].tariffKey!);
+      if (!availableTariffs.find(t => String(t.tariffKey) === tariffKey)) {
+        setTariffKey(String(availableTariffs[0].tariffKey!));
       }
     } else {
       setTariffKey('');
     }
     setResult(null);
     setError(null);
-  }, [availableTariffs]);
+  }, [availableTariffs, province, tariffKey]);
   
   const selectedTariff = useMemo(() => (tariffKey ? tariffs[tariffKey] : null), [tariffKey]);
 
@@ -124,7 +124,7 @@ export function EskomCalculator() {
                 </SelectTrigger>
                 <SelectContent>
                   {availableTariffs.map((t) => (
-                    <SelectItem key={t.tariffKey} value={t.tariffKey!}>{t.name}</SelectItem>
+                    <SelectItem key={String(t.tariffKey)} value={String(t.tariffKey!)}>{t.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

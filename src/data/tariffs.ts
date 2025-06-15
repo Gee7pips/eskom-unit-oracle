@@ -1,5 +1,3 @@
-import { tariffs } from './tariffs';
-
 export interface Tariff {
   customer_type: string;
   description: string;
