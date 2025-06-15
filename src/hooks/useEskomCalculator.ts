@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from 'react';
 import { tariffs, Tariff, TOUTariff } from '@/data/tariffs';
 import { provinceTariffs } from '@/data/provinces';
@@ -22,7 +21,7 @@ export function useEskomCalculator() {
   useEffect(() => {
     if (availableTariffs.length > 0) {
       if (!availableTariffs.find(t => t.tariffKey === tariffKey)) {
-        setTariffKey(availableTariffs[0].tariffKey!);
+        setTariffKey(String(availableTariffs[0].tariffKey!));
       }
     } else {
       setTariffKey('');
