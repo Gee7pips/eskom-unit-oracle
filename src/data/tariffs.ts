@@ -1,3 +1,4 @@
+import { tariffs } from './tariffs';
 
 export interface Tariff {
   customer_type: string;
@@ -36,6 +37,13 @@ export interface Tariff {
 }
 
 export const tariffs: { [key: string]: Tariff } = {
+  "Homelight_20A": {
+    "customer_type": "Residential",
+    "description": "Standard residential customers with 20A supply.",
+    "tariff_type": "Flat Rate",
+    "energy_charge_c_per_kWh_vat_incl": 285.07,
+    "notes": "Simplified flat rate structure, suitable for low-usage households."
+  },
   "Homelight_60A": {
     "customer_type": "Residential",
     "description": "Standard residential customers with 60A supply (prepayment or conventional).",

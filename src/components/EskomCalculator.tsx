@@ -1,6 +1,6 @@
-
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { tariffs, Tariff } from '@/data/tariffs';
+import { provinceTariffs } from '@/data/provinces';
 import { calculateUnits, CalculationResult } from '@/lib/calculator';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -13,7 +13,8 @@ import { Calculator, Info, Zap } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function EskomCalculator() {
-  const [tariffKey, setTariffKey] = useState<string>(Object.keys(tariffs)[0]);
+  const [province, setProvince] = useState<string>(Object.keys(provinceTariffs)[0]);
+  const [tariffKey, setTariffKey] = useState<string>('');
   const [amount, setAmount] = useState<string>('500');
   const [notifiedDemand, setNotifiedDemand] = useState<string>('25');
   const [season, setSeason] = useState<'high_demand_season' | 'low_demand_season'>('low_demand_season');
@@ -21,10 +22,28 @@ export function EskomCalculator() {
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   
-  const selectedTariff = useMemo(() => tariffs[tariffKey], [tariffKey]);
+  const availableTariffs = useMemo(() => {
+    if (!province) return [];
+    return provinceTariffs[province].filter(t => t.tariffKey && tariffs[t.tariffKey]);
+  }, [province]);
+
+  useEffect(() => {
+    if (availableTariffs.length > 0) {
+      if (!availableTariffs.find(t => t.tariffKey === tariffKey)) {
+        setTariffKey(availableTariffs[0].tariffKey!);
+      }
+    } else {
+      setTariffKey('');
+    }
+    setResult(null);
+    setError(null);
+  }, [availableTariffs]);
+  
+  const selectedTariff = useMemo(() => (tariffKey ? tariffs[tariffKey] : null), [tariffKey]);
 
   const handleCalculate = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedTariff) return;
     setError(null);
     setResult(null);
 
@@ -65,8 +84,8 @@ export function EskomCalculator() {
     setTouPercentages(newPercentages);
   }
 
-  const showNmdInput = selectedTariff.tariff_type.includes('Unbundled') || selectedTariff.tariff_type.includes('Time-of-Use');
-  const showTouControls = selectedTariff.tariff_type === 'Time-of-Use';
+  const showNmdInput = selectedTariff && (selectedTariff.tariff_type.includes('Unbundled') || selectedTariff.tariff_type.includes('Time-of-Use'));
+  const showTouControls = selectedTariff && selectedTariff.tariff_type === 'Time-of-Use';
 
   return (
     <Card className="w-full max-w-2xl mx-auto shadow-2xl">
@@ -85,22 +104,38 @@ export function EskomCalculator() {
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="tariff">Select Tariff Plan</Label>
-              <Select value={tariffKey} onValueChange={setTariffKey}>
-                <SelectTrigger id="tariff">
-                  <SelectValue placeholder="Select a tariff" />
+              <Label htmlFor="province">Select Province</Label>
+              <Select value={province} onValueChange={setProvince}>
+                <SelectTrigger id="province">
+                  <SelectValue placeholder="Select a province" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(tariffs).map(([key, t]) => (
-                    <SelectItem key={key} value={key}>{t.description}</SelectItem>
+                  {Object.keys(provinceTariffs).map((prov) => (
+                    <SelectItem key={prov} value={prov}>{prov}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount Spent (R)</Label>
-              <Input id="amount" type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="e.g. 500" required />
+              <Label htmlFor="tariff">Select Tariff Plan</Label>
+              <Select value={tariffKey} onValueChange={setTariffKey} disabled={!province || availableTariffs.length === 0}>
+                <SelectTrigger id="tariff">
+                  <SelectValue placeholder="Select a tariff" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableTariffs.map((t) => (
+                    <SelectItem key={t.tariffKey} value={t.tariffKey!}>{t.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {availableTariffs.length === 0 && province && (
+                <p className="text-xs text-muted-foreground pt-1">No supported tariffs for this province yet.</p>
+              )}
             </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="amount">Amount Spent (R)</Label>
+            <Input id="amount" type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="e.g. 500" required />
           </div>
           
           {showNmdInput && (
@@ -122,7 +157,7 @@ export function EskomCalculator() {
             </div>
           )}
 
-          {showTouControls && (
+          {showTouControls && selectedTariff && (
             <div className="space-y-4 pt-4 border-t">
               <div className="flex items-center justify-between">
                 <h3 className="font-medium">Time of Use Settings</h3>
@@ -182,7 +217,7 @@ export function EskomCalculator() {
 
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" className="w-full text-lg" size="lg">
+          <Button type="submit" className="w-full text-lg" size="lg" disabled={!selectedTariff}>
             <Calculator className="mr-2 h-5 w-5" /> Calculate Units
           </Button>
 
