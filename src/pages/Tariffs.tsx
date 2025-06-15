@@ -1,3 +1,4 @@
+
 import { tariffs, Tariff } from "@/data/tariffs";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import ProvinceTariffsCarousel from "@/components/ProvinceTariffsCarousel";
@@ -38,11 +39,11 @@ function TariffDetailCard({ tariff }: { tariff: Tariff }) {
                 <span key={region} className="inline-flex mr-2">{region} ({tariff.regions[region]})</span>
               ))}
         </div>
-        {tariff.tariff_type === "Inclining Block" && (
+        {tariff.tariff_type === "Inclining Block" && "blocks" in tariff && (
           <div>
             <span className="font-bold">Tariff Blocks:</span>
             <ul className="mt-1 ml-4 list-disc">
-              {(tariff as any).blocks.map((b: any, idx: number) => (
+              {tariff.blocks.map((b, idx) => (
                 <li key={idx}>
                   <span>
                     {b.to_kWh
@@ -54,33 +55,33 @@ function TariffDetailCard({ tariff }: { tariff: Tariff }) {
             </ul>
           </div>
         )}
-        {tariff.tariff_type === "Time of Use (TOU)" && typeof (tariff as any).periods !== "string" && (
+        {tariff.tariff_type === "Time of Use (TOU)" && "periods" in tariff && typeof tariff.periods !== "string" && (
           <div>
             <span className="font-bold">Seasons & Periods:</span>
             <ul className="ml-4 mt-1 list-disc">
               <li>
                 <span className="font-semibold">High Season:</span>
-                Peak: R{((tariff as any).periods.high_season_peak.rate_c_per_kWh / 100).toFixed(2)} ({(tariff as any).periods.high_season_peak.hours} hrs, {(tariff as any).periods.high_season_peak.months})<br />
-                Standard: R{((tariff as any).periods.high_season_standard.rate_c_per_kWh / 100).toFixed(2)}<br />
-                Off-Peak: R{((tariff as any).periods.high_season_off_peak.rate_c_per_kWh / 100).toFixed(2)}
+                Peak: R{tariff.periods.high_season_peak.rate_c_per_kWh / 100 .toFixed(2)} ({tariff.periods.high_season_peak.hours} hrs, {tariff.periods.high_season_peak.months})<br />
+                Standard: R{tariff.periods.high_season_standard.rate_c_per_kWh / 100 .toFixed(2)}<br />
+                Off-Peak: R{tariff.periods.high_season_off_peak.rate_c_per_kWh / 100 .toFixed(2)}
               </li>
               <li>
                 <span className="font-semibold">Low Season:</span>
-                Peak: R{((tariff as any).periods.low_season_peak.rate_c_per_kWh / 100).toFixed(2)}<br />
-                Standard: R{((tariff as any).periods.low_season_standard.rate_c_per_kWh / 100).toFixed(2)}<br />
-                Off-Peak: R{((tariff as any).periods.low_season_off_peak.rate_c_per_kWh / 100).toFixed(2)}
+                Peak: R{tariff.periods.low_season_peak.rate_c_per_kWh / 100 .toFixed(2)}<br />
+                Standard: R{tariff.periods.low_season_standard.rate_c_per_kWh / 100 .toFixed(2)}<br />
+                Off-Peak: R{tariff.periods.low_season_off_peak.rate_c_per_kWh / 100 .toFixed(2)}
               </li>
             </ul>
           </div>
         )}
-        {tariff.tariff_type === "Subsidized Flat Rate" && (
+        {tariff.tariff_type === "Subsidized Flat Rate" && "energy_rate_c_per_kWh" in tariff && (
           <div>
-            <span className="font-bold">Flat rate:</span> R{((tariff as any).energy_rate_c_per_kWh / 100).toFixed(2)} / kWh
+            <span className="font-bold">Flat rate:</span> R{(tariff.energy_rate_c_per_kWh / 100).toFixed(2)} / kWh
           </div>
         )}
-        {"fixed_monthly_charge_R" in tariff && typeof (tariff as any).fixed_monthly_charge_R === "number" ? (
+        {"fixed_monthly_charge_R" in tariff && typeof tariff.fixed_monthly_charge_R === "number" ? (
           <div>
-            <span className="font-bold">Fixed monthly charge:</span> R{(tariff as any).fixed_monthly_charge_R.toFixed(2)}
+            <span className="font-bold">Fixed monthly charge:</span> R{tariff.fixed_monthly_charge_R.toFixed(2)}
           </div>
         ) : (
           <div>
@@ -100,51 +101,62 @@ export default function TariffsPage() {
   return (
     <>
       <SeoHead
-        title="Tariffs Explained – EskomCalc Pro Tariff Guide 2025/26"
-        description="Explore South African prepaid and postpaid Eskom tariffs. Learn about inclining block rates, TOU plans, and see how all provinces compare for 2025/26."
+        title="South African Electricity Tariffs Explained – 2025/26 Guide"
+        description="A plain-language, up-to-date guide to Eskom and municipal electricity tariffs in South Africa – explore how each structure works, who qualifies, and how to optimize your bill."
         canonicalUrl="https://preview--eskom-unit-oracle.lovable.app/tariffs"
       />
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-100 dark:from-slate-900 dark:to-slate-800 py-12 px-2">
         <div className="mx-auto max-w-5xl p-5">
-          <h1 className="text-4xl font-playfair font-extrabold mb-8 text-center tracking-tight text-primary animate-fade-in">
-            South Africa Electricity Tariffs Explained (2025/26)
+          <h1 className="text-4xl md:text-5xl font-playfair font-extrabold mb-8 text-center tracking-tight text-primary animate-fade-in">
+            Understanding SA Electricity Tariffs (2025/26)
           </h1>
-          <div className="mb-8 text-lg text-muted-foreground text-center max-w-3xl mx-auto">
-            <span className="font-bold text-primary">What are electricity tariffs?</span><br />
-            Electricity tariffs are the price structures Eskom and municipalities use to charge households, businesses, and farms for using the grid. There are several types:
-            <ul className="list-disc text-left text-base font-normal mx-auto mt-3 mb-4 pl-7">
+          <div className="mb-8 text-lg text-muted-foreground text-center max-w-3xl mx-auto leading-relaxed">
+            <p className="font-bold text-primary text-xl mb-2">What is an electricity tariff?</p>
+            <p>
+              An electricity tariff is the price structure your utility provider (Eskom or municipality) uses to charge you for using grid electricity. It isn't just the rate per unit (kWh); it's a set of rules that determines how much you pay depending on when, how much, or even who you are.
+            </p>
+            <ul className="list-disc text-left text-base font-normal mx-auto mt-4 mb-4 pl-7 space-y-2">
               <li>
-                <span className="font-bold">Inclining Block Tariffs:</span> The more you use in a month, the higher your rate per unit becomes – a system designed to reward energy saving.
+                <span className="font-bold">Inclining Block Tariffs:</span>{" "}
+                The more power you use in a month, the higher your rate per unit becomes. These blocks are designed to reward those who save, and charge more for higher consumption.
               </li>
               <li>
-                <span className="font-bold">Time of Use (TOU) Tariffs:</span> The price changes depending on the time of day (peak, standard, off-peak) and season (high, low), signaling when the grid is most/least stressed.
+                <span className="font-bold">Time of Use (TOU) Tariffs:</span>{" "}
+                Prices change depending on <span className="font-semibold text-blue-800 dark:text-blue-200">time of day</span> (peak, standard, off-peak) and <span className="font-semibold text-amber-700 dark:text-yellow-200">season</span> (high, low demand). Pay less when the grid is under less stress and more at peak grid demand.
               </li>
               <li>
-                <span className="font-bold">Flat & Subsidized Rates:</span> Fixed rates for vulnerable or low-income customers, regardless of how much is used.
+                <span className="font-bold">Flat & Subsidized Rates:</span>{" "}
+                Fixed rates aimed at supporting vulnerable or low-income households, no matter how much you use.
               </li>
             </ul>
-            <span className="font-semibold">
-              <span className="inline-block text-green-700 dark:text-green-300">Modern prepaid meters</span> let you see your usage and which tariff block or time band you're on, making it easier to plan and save.
-            </span>
+            <p>
+              <span className="font-semibold text-green-700 dark:text-green-300">
+                Modern prepaid smart meters
+              </span>{" "}
+              can show which tariff block or time band your usage falls into, helping you monitor and reduce your bill.
+            </p>
           </div>
 
-          <div className="mb-14 md:mb-16">
+          <section className="mb-14 md:mb-16">
             <ProvinceTariffsCarousel />
-          </div>
+          </section>
           
-          <div className="mb-4 text-2xl font-bold text-primary/80 font-playfair text-center">
-            All National & City Tariffs in Detail
-          </div>
-          <div className="mb-8 text-lg text-muted-foreground text-center max-w-2xl mx-auto">
-            Below you'll find expanded details of tariffs, blocks, TOU bands, and region-specific rates, for deep-dive comparison.
-          </div>
-          <div>
-            {Object.values(tariffs).map((tariff: Tariff) => (
-              <TariffDetailCard key={tariff.name} tariff={tariff} />
-            ))}
-          </div>
+          <section>
+            <div className="mb-4 text-2xl font-bold text-primary/80 font-playfair text-center">
+              Detailed National & City Tariffs
+            </div>
+            <div className="mb-8 text-lg text-muted-foreground text-center max-w-2xl mx-auto">
+              Explore below for in-depth breakdowns of how each tariff works, all available blocks and periods, and who qualifies. Use this knowledge to compare and choose, or simply get transparency about your energy spend.
+            </div>
+            <div>
+              {Object.values(tariffs).map((tariff: Tariff) => (
+                <TariffDetailCard key={tariff.name} tariff={tariff} />
+              ))}
+            </div>
+          </section>
         </div>
       </div>
     </>
   );
 }
+
