@@ -80,7 +80,7 @@ const rawProvinceData: Record<string, Omit<ProvinceTariffInfo, 'tariffKey'>[]> =
 export const provinceTariffs: ProvinceData = Object.entries(rawProvinceData).reduce((acc, [province, tariffList]) => {
   acc[province] = tariffList.map(tariff => ({
     ...tariff,
-    tariffKey: nameToKeyMap[tariff.name],
+    tariffKey: nameToKeyMap[tariff.name] !== undefined ? String(nameToKeyMap[tariff.name]) : undefined,
   }));
   return acc;
 }, {} as ProvinceData);
