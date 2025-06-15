@@ -1,6 +1,6 @@
-
+import { useUser } from "@/contexts/UserContext";
 import { Link, useLocation } from "react-router-dom";
-import { Menu } from "lucide-react";
+import { Menu, User as UserIcon, LogOut as LogOutIcon, LogIn as LogInIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import * as React from "react";
@@ -13,6 +13,7 @@ const navLinks = [
 export function Navbar() {
   const location = useLocation();
   const [open, setOpen] = React.useState(false);
+  const { user, signOut } = useUser();
 
   return (
     <nav className="w-full bg-gradient-to-r from-blue-900 via-primary to-green-600/80 shadow-xl border-b border-primary/15">
@@ -44,6 +45,20 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+          {user ? (
+            <>
+              <Link to="/profile" className="px-3 py-2 rounded-lg flex items-center gap-2 hover:bg-white/10 text-white/90">
+                <UserIcon className="w-5 h-5" /> Profile
+              </Link>
+              <Button variant="ghost" onClick={signOut} className="text-white flex gap-2 items-center">
+                <LogOutIcon className="w-4 h-4" /> Logout
+              </Button>
+            </>
+          ) : (
+            <Link to="/auth" className="px-3 py-2 rounded-lg flex items-center gap-2 hover:bg-white/10 text-white/90">
+              <LogInIcon className="w-5 h-5" /> Login
+            </Link>
+          )}
         </div>
         {/* Mobile */}
         <div className="md:hidden flex items-center">
@@ -74,6 +89,20 @@ export function Navbar() {
                     {link.label}
                   </Link>
                 ))}
+                {user ? (
+                  <>
+                    <Link to="/profile" className="px-3 py-2 rounded-lg flex items-center gap-2 hover:bg-white/10 text-white/90" onClick={() => setOpen(false)}>
+                      <UserIcon className="w-4 h-4" /> Profile
+                    </Link>
+                    <Button variant="ghost" onClick={() => { signOut(); setOpen(false); }} className="text-white flex gap-2 items-center">
+                      <LogOutIcon className="w-4 h-4" /> Logout
+                    </Button>
+                  </>
+                ) : (
+                  <Link to="/auth" className="px-3 py-2 rounded-lg flex items-center gap-2 hover:bg-white/10 text-white/90" onClick={() => setOpen(false)}>
+                    <LogInIcon className="w-4 h-4" /> Login
+                  </Link>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
