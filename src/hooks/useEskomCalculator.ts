@@ -1,3 +1,4 @@
+
 import { useState, useMemo, useEffect } from 'react';
 import { tariffs, Tariff, TOUTariff } from '@/data/tariffs';
 import { provinceTariffs } from '@/data/provinces';
@@ -13,9 +14,10 @@ export function useEskomCalculator() {
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // SAFER: If province isn't found, default to empty array.
   const availableTariffs = useMemo(() => {
     if (!province) return [];
-    return provinceTariffs[province].filter(t => t.tariffKey && tariffs[t.tariffKey]);
+    return (provinceTariffs[province] ?? []).filter(t => t.tariffKey && tariffs[t.tariffKey]);
   }, [province]);
 
   useEffect(() => {

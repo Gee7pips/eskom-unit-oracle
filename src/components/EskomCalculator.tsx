@@ -1,4 +1,3 @@
-
 import { useEskomCalculator } from '@/hooks/useEskomCalculator';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,7 +31,8 @@ export function EskomCalculator() {
     selectedTariff,
     handleCalculate,
     showNmdInput,
-    showTouControls
+    showTouControls,
+    provinceTariffs
   } = useEskomCalculator();
 
   // Animation: show flash on new result
@@ -43,7 +43,9 @@ export function EskomCalculator() {
     setTimeout(() => setFlash(false), 1000);
   }
   function handleReset() {
-    setProvince(Object.keys(availableTariffs?.length ? availableTariffs[0] : {})[0] ?? "Gauteng");
+    // Always reset to a valid province key (first available in provinceTariffs)
+    const firstProvinceKey = Object.keys(provinceTariffs)[0] ?? "Gauteng";
+    setProvince(firstProvinceKey);
     setTariffKey('');
     setAmount('500');
     setNotifiedDemand('25');
@@ -132,4 +134,3 @@ export function EskomCalculator() {
     </Card>
   );
 }
-
