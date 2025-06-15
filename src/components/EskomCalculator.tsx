@@ -11,6 +11,7 @@ import { CalculationResultDisplay } from './calculator/CalculationResultDisplay'
 import { ErrorAlert } from './calculator/ErrorAlert';
 import { useState } from "react";
 
+// MODERN, LUX DARK DESIGN
 export function EskomCalculator() {
   const {
     province,
@@ -36,15 +37,14 @@ export function EskomCalculator() {
     provinceTariffs
   } = useEskomCalculator();
 
-  // Animation: show flash on new result
+  // Clean flash animation for result update
   const [flash, setFlash] = useState(false);
   function handleFormSubmit(e: React.FormEvent) {
     handleCalculate(e);
     setFlash(true);
-    setTimeout(() => setFlash(false), 1000);
+    setTimeout(() => setFlash(false), 900);
   }
   function handleReset() {
-    // Always reset to a valid province key (first available in provinceTariffs)
     const firstProvinceKey = Object.keys(provinceTariffs)[0] ?? "Gauteng";
     setProvince(firstProvinceKey);
     setTariffKey('');
@@ -56,54 +56,62 @@ export function EskomCalculator() {
 
   return (
     <Card
-      className="w-full max-w-2xl mx-auto rounded-[32px] p-0.5 border-0 relative shadow-[0_2px_120px_0_rgba(19,60,100,0.42)] overflow-hidden
-        ring-2 ring-blue-700/60 before:absolute before:inset-0 before:-z-10 
-        before:bg-gradient-to-br before:from-[#0D1321] before:via-[#181929] before:to-[#101212]
-        after:content-[''] after:absolute after:inset-0 after:-z-10
-        after:bg-[radial-gradient(circle_at_70%_5%,rgba(15,90,183,0.13)_0%,transparent_70%)]
-        dark:before:from-[#0d0f18] dark:before:via-[#17192c] dark:before:to-[#0d131a]"
+      className={`
+        w-full max-w-2xl mx-auto
+        bg-gradient-to-tr from-[#0b1227] via-[#131B2D] to-[#19233d]
+        dark:bg-gradient-to-tr dark:from-[#10162b] dark:via-[#152147] dark:to-[#12263a]
+        rounded-[30px] border border-blue-900/60 shadow-xl shadow-blue-900/30
+        p-0.5 relative overflow-hidden
+        animate-fade-in
+      `}
       style={{
-        borderRadius: 36,
-        boxShadow: "0 8px 32px 0 rgba(10,25,28,0.24), 0 1.5px 12px 0 rgba(0,180,255,0.08)",
-        border: '1.5px solid #183b8c'
+        borderRadius: 30,
+        boxShadow: "0 4px 36px 0 rgba(15,33,55,0.29), 0 1.5px 12px 0 rgba(88,199,250,0.04)",
+        border: '1.5px solid #20315e'
       }}
     >
-      {/* Glow accent ring */}
-      <div className="pointer-events-none absolute -inset-0.5 rounded-[36px] z-10 border-2 border-blue-600/60 shadow-[0_0_32px_5px_rgba(77,180,255,0.13)] blur-[2px]" aria-hidden />
-      {/* Neon background blur accents */}
-      <div className="absolute -top-14 right-[-30px] w-56 h-56 rounded-full bg-gradient-to-tr from-blue-700/40 via-indigo-400/10 to-cyan-300/10 blur-3xl z-0" aria-hidden />
-      <div className="absolute left-[-40px] -bottom-14 w-44 h-44 rounded-full bg-gradient-to-br from-green-700/60 via-fuchsia-800/30 to-fuchsia-500/10 blur-2xl z-0" aria-hidden />
+      {/* Neon Top edge highlight */}
+      <div className="pointer-events-none absolute inset-x-0 -top-2 h-3 rounded-t-[32px] z-20 blur-[3.5px] opacity-70" style={{
+        background: "linear-gradient(90deg,#31f2f8 0%,#589dff 45%,#00fff0 100%)"
+      }} />
+      {/* Subtle radial background */}
+      <div className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(circle at 10% 30%,rgba(33,160,255,0.15) 0,rgba(22,27,47,0.0) 60%)"
+        }} />
       {/* Card content */}
-      <CardHeader className="!pb-4 relative z-20 text-white animate-fade-in">
-        <div className="flex items-center gap-6">
-          <div className="bg-gradient-to-tr from-cyan-600 via-cyan-800 to-indigo-800 p-3.5 rounded-2xl shadow-inner ring-2 ring-cyan-400/30 border-[3px] border-white/5 scale-105">
-            <Zap size={36} className="text-cyan-300 drop-shadow" />
+      <CardHeader className="!pb-3 relative z-20 text-white">
+        <div className="flex items-center gap-5">
+          <div className="bg-gradient-to-tr from-cyan-600 via-blue-700/60 to-indigo-800 p-3 rounded-xl shadow-inner border border-white/10 text-cyan-300">
+            <Zap size={28} className="drop-shadow" />
           </div>
           <div>
-            <CardTitle className="text-4xl font-playfair font-extrabold tracking-tight text-blue-100 leading-tight drop-shadow flex items-center">
-              <span className="text-transparent bg-gradient-to-r from-cyan-300 via-blue-400 to-fuchsia-400 bg-clip-text">EskomCalc&nbsp;Pro</span>
-              <span className="ml-2 text-2xl font-black text-primary align-top animate-fade-in">2025/26</span>
+            <CardTitle className="text-3xl font-playfair font-extrabold tracking-tight text-blue-100 leading-tight flex items-center">
+              <span className="text-transparent bg-gradient-to-r from-cyan-300 via-blue-300 to-fuchsia-400 bg-clip-text">
+                EskomCalc Pro
+              </span>
+              <span className="ml-2 text-lg font-black text-cyan-300 align-top">
+                2025/26
+              </span>
             </CardTitle>
-            <CardDescription className="mt-2 text-lg text-cyan-100 font-medium drop-shadow">
-              Instantly calculate prepaid units. Smart savings, live tariffs.
+            <CardDescription className="mt-1 text-base text-cyan-100 font-normal drop-shadow-sm">
+              Calculate prepaid units. Live tariffs, simple savings.
             </CardDescription>
           </div>
         </div>
       </CardHeader>
       <form onSubmit={handleFormSubmit} className="space-y-1 z-10 relative">
-        <CardContent className="space-y-7 pt-4 pb-2">
+        <CardContent className="space-y-6 pt-3 pb-2">
           {/* Info section */}
-          <div className="mb-2 p-5 rounded-2xl border border-blue-400/15 bg-gradient-to-r from-blue-800/10 via-[#181b23]/70 to-blue-400/10 flex items-center gap-3 shadow-sm backdrop-blur-md">
-            <Info className="text-cyan-400 shrink-0" size={22} />
-            <div className="text-[16px] text-blue-100 font-semibold">
-              Select your <span className="font-bold text-cyan-300">province</span> and <span className="font-bold text-cyan-300">tariff</span>. <span className="text-cyan-200">TOU = Time of Use.</span>
+          <div className="mb-2 p-4 rounded-xl border border-blue-400/25 bg-gradient-to-r from-blue-800/30 via-[#141F37]/80 to-blue-600/10 flex items-center gap-3 shadow-sm">
+            <Info className="text-cyan-300 shrink-0" size={19} />
+            <div className="text-[15px] text-blue-200/90 font-semibold">
+              Select your <span className="font-bold text-cyan-200">province</span> and <span className="font-bold text-cyan-200">tariff</span>. <span className="text-cyan-100/70">TOU = Time of Use.</span>
             </div>
-            <span className="ml-auto text-xs bg-cyan-500/10 rounded-full px-2.5 py-1 font-bold text-cyan-200 shadow">
-              SA Wide
-            </span>
+            <span className="ml-auto text-xs bg-cyan-400/10 rounded-full px-2 py-1 font-bold text-cyan-100 ring-1 ring-cyan-500/20 animate-fade-in">SA Wide</span>
           </div>
           {/* Tariff selection and amount input */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-6">
               <TariffSelection
                 province={province}
@@ -120,9 +128,9 @@ export function EskomCalculator() {
               )}
             </div>
           </div>
-          {/* TOU Controls (Season and sliders) */}
+          {/* TOU Controls */}
           {showTouControls && selectedTariff && (
-            <div className="mt-4 border-t border-blue-300/15 pt-4 bg-gradient-to-r from-blue-900/5 via-slate-900/20 to-transparent rounded-lg shadow-inner">
+            <div className="mt-3 border-t border-blue-300/20 pt-4 bg-gradient-to-r from-blue-900/30 via-slate-950/40 to-transparent rounded-lg shadow-sm">
               <TouControls 
                 season={season}
                 onSeasonChange={setSeason}
@@ -133,11 +141,23 @@ export function EskomCalculator() {
             </div>
           )}
         </CardContent>
-        <CardFooter className="flex flex-col gap-6 bg-gradient-to-r from-[#10121a]/85 via-[#181b23]/60 to-cyan-900/30 !-mx-6 rounded-b-3xl px-8 py-7 mt-2 shadow-md border-t border-cyan-800/30">
-          <div className="flex flex-row gap-4 w-full">
+        <CardFooter className="
+          flex flex-col gap-5 
+          bg-gradient-to-br from-[#182649]/60 via-[#10182b]/75 to-[#28448d]/40
+          dark:from-[#162046]/60 dark:via-[#131f36]/80 dark:to-[#15325a]/20
+          !-mx-6 rounded-b-[27px] px-8 py-6 mt-2 shadow-lg border-t border-blue-900/30
+        ">
+          <div className="flex flex-row gap-3 w-full">
             <Button
               type="submit"
-              className="w-full text-lg font-bold shadow-lg shadow-cyan-600/10 hover:shadow-cyan-400/20 bg-gradient-to-r from-cyan-900 via-blue-900 to-blue-700 hover:from-cyan-700 hover:to-fuchsia-600 transition-all hover:scale-[1.04]"
+              className="
+                w-full text-lg font-bold shadow-lg shadow-cyan-400/10 
+                hover:shadow-cyan-300/20 transition-all hover:scale-[1.03]
+                bg-gradient-to-tr from-blue-800 via-blue-600 to-cyan-600
+                text-cyan-100
+                border-2 border-cyan-800/10
+                hover:bg-gradient-to-tr hover:from-cyan-700 hover:to-fuchsia-600
+              "
               size="lg"
               disabled={!selectedTariff}
             >
@@ -147,19 +167,23 @@ export function EskomCalculator() {
             <Button
               type="button"
               variant="secondary"
-              className="px-4 ring-2 ring-cyan-800/30 bg-gradient-to-tr from-slate-900/80 via-blue-900/70 to-slate-800/65 hover:scale-105 transition-transform"
+              className="
+                px-4 ring-1 ring-cyan-300/15
+                bg-gradient-to-tr from-slate-800 via-blue-800/90 to-slate-900/90
+                hover:scale-105 transition-transform
+                text-cyan-200
+                border border-blue-800/10
+              "
               onClick={handleReset}
               title="Reset"
               aria-label="Reset form"
             >
-              <RefreshCw size={19} className="text-cyan-400" />
+              <RefreshCw size={17} className="text-cyan-300" />
             </Button>
           </div>
-
           {error && <div className="animate-fade-in"><ErrorAlert error={error} /></div>}
-
           {result && (
-            <div className={flash ? "animate-flash-result" : ""}>
+            <div className={flash ? "animate-flash-result" : "transition-all"}>
               <CalculationResultDisplay result={result} amount={amount} />
             </div>
           )}
