@@ -95,6 +95,7 @@ export function useEskomCalculator() {
     season,
     setSeason,
     touPercentages,
+    setTouPercentages,
     handleTouSliderChange,
     result,
     error,
