@@ -1,4 +1,3 @@
-
 import { tariffs } from './tariffs';
 
 export interface ProvinceTariffInfo {
@@ -77,10 +76,9 @@ const rawProvinceData: Record<string, Omit<ProvinceTariffInfo, 'tariffKey'>[]> =
 };
 
 export const provinceTariffs: ProvinceData = Object.entries(rawProvinceData).reduce((acc, [province, tariffList]) => {
-  acc[province] = (tariffList as any[]).map(tariff => ({
+  acc[province] = tariffList.map(tariff => ({
     ...tariff,
     tariffKey: nameToKeyMap[tariff.name],
   }));
   return acc;
 }, {} as ProvinceData);
-
