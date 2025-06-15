@@ -31,7 +31,7 @@ export function useEskomCalculator() {
     setResult(null);
     setError(null);
   }, [availableTariffs, province, tariffKey]);
-  
+
   const selectedTariff = useMemo(() => (tariffKey ? tariffs[tariffKey] : null), [tariffKey]);
 
   const handleCalculate = (e: React.FormEvent) => {
@@ -78,13 +78,14 @@ export function useEskomCalculator() {
         }
         newPercentages.offPeak = 100 - newPercentages.peak - newPercentages.standard;
     }
-    
+
     setTouPercentages(newPercentages);
   };
-  
+
   const showNmdInput = selectedTariff && ('network_capacity_charge_R_per_kVA' in selectedTariff);
   const showTouControls = selectedTariff && selectedTariff.tariff_type === 'Time of Use (TOU)';
 
+  // Add provinceTariffs to return so EskomCalculator can access it
   return {
     province,
     setProvince,
@@ -105,6 +106,7 @@ export function useEskomCalculator() {
     selectedTariff,
     handleCalculate,
     showNmdInput,
-    showTouControls
+    showTouControls,
+    provinceTariffs // <-- Fix: add this property
   };
 }
