@@ -61,15 +61,33 @@ function TariffDetailCard({ tariff }: { tariff: Tariff }) {
             <ul className="ml-4 mt-1 list-disc">
               <li>
                 <span className="font-semibold">High Season:</span>
-                Peak: R{tariff.periods.high_season_peak.rate_c_per_kWh / 100 .toFixed(2)} ({tariff.periods.high_season_peak.hours} hrs, {tariff.periods.high_season_peak.months})<br />
-                Standard: R{tariff.periods.high_season_standard.rate_c_per_kWh / 100 .toFixed(2)}<br />
-                Off-Peak: R{tariff.periods.high_season_off_peak.rate_c_per_kWh / 100 .toFixed(2)}
+                Peak: R{typeof tariff.periods.high_season_peak.rate_c_per_kWh === "number"
+                  ? (tariff.periods.high_season_peak.rate_c_per_kWh / 100).toFixed(2)
+                  : "N/A"
+                } ({tariff.periods.high_season_peak.hours}, {tariff.periods.high_season_peak.months})<br />
+                Standard: R{typeof tariff.periods.high_season_standard.rate_c_per_kWh === "number"
+                  ? (tariff.periods.high_season_standard.rate_c_per_kWh / 100).toFixed(2)
+                  : "N/A"
+                }<br />
+                Off-Peak: R{typeof tariff.periods.high_season_off_peak.rate_c_per_kWh === "number"
+                  ? (tariff.periods.high_season_off_peak.rate_c_per_kWh / 100).toFixed(2)
+                  : "N/A"
+                }
               </li>
               <li>
                 <span className="font-semibold">Low Season:</span>
-                Peak: R{tariff.periods.low_season_peak.rate_c_per_kWh / 100 .toFixed(2)}<br />
-                Standard: R{tariff.periods.low_season_standard.rate_c_per_kWh / 100 .toFixed(2)}<br />
-                Off-Peak: R{tariff.periods.low_season_off_peak.rate_c_per_kWh / 100 .toFixed(2)}
+                Peak: R{typeof tariff.periods.low_season_peak.rate_c_per_kWh === "number"
+                  ? (tariff.periods.low_season_peak.rate_c_per_kWh / 100).toFixed(2)
+                  : "N/A"
+                }<br />
+                Standard: R{typeof tariff.periods.low_season_standard.rate_c_per_kWh === "number"
+                  ? (tariff.periods.low_season_standard.rate_c_per_kWh / 100).toFixed(2)
+                  : "N/A"
+                }<br />
+                Off-Peak: R{typeof tariff.periods.low_season_off_peak.rate_c_per_kWh === "number"
+                  ? (tariff.periods.low_season_off_peak.rate_c_per_kWh / 100).toFixed(2)
+                  : "N/A"
+                }
               </li>
             </ul>
           </div>
