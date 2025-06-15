@@ -1,3 +1,4 @@
+
 import { tariffs } from './tariffs';
 
 export interface ProvinceTariffInfo {
@@ -6,7 +7,7 @@ export interface ProvinceTariffInfo {
   customer_type: string;
   description: string;
   eligibility: string;
-  tariffKey?: keyof typeof tariffs;
+  tariffKey?: string;   // <--- Fixed to always be string
 }
 
 export type ProvinceData = Record<string, ProvinceTariffInfo[]>;
@@ -84,3 +85,4 @@ export const provinceTariffs: ProvinceData = Object.entries(rawProvinceData).red
   }));
   return acc;
 }, {} as ProvinceData);
+
