@@ -22,8 +22,11 @@ const Auth: React.FC = () => {
   const { user } = useUser();
   const navigate = useNavigate();
 
+  // Always redirect after login (including when session is restored)
   React.useEffect(() => {
-    if (user) navigate("/");
+    if (user) {
+      navigate("/", { replace: true });
+    }
     // eslint-disable-next-line
   }, [user]);
 
@@ -54,7 +57,6 @@ const Auth: React.FC = () => {
       provider: "google",
       options: { redirectTo: window.location.origin + "/" }
     });
-    // (For OAuth, Supabase usually redirects so any error here is unusual)
     if (error) toast.error("Google sign-in failed: " + error.message);
     setOauthLoading(false);
   };
@@ -147,6 +149,4 @@ const Auth: React.FC = () => {
     </div>
   );
 };
-
 export default Auth;
-

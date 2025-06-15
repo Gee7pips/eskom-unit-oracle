@@ -1,4 +1,3 @@
-
 import React, { createContext, useEffect, useState, useContext } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
@@ -23,18 +22,18 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Listen to auth state
   useEffect(() => {
-    // Ensure subscription is always defined before trying to unsubscribe
+    // Set up auth state change listener FIRST, then check for existing session for proper restoration.
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id);
+        // Run async profile fetching after state set for safety
+        setTimeout(() => fetchProfile(session.user.id), 0);
       } else {
         setProfile(null);
       }
     });
 
-    // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -45,7 +44,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     return () => {
-      // Safely call unsubscribe only if it's defined
       if (data && typeof data.subscription?.unsubscribe === "function") {
         data.subscription.unsubscribe();
       }
