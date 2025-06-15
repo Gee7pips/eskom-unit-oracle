@@ -1,4 +1,3 @@
-
 import React, { createContext, useEffect, useState, useContext } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
@@ -23,7 +22,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Listen to auth state
   useEffect(() => {
-    const { subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+    // Fixed destructure here
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
